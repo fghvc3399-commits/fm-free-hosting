@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YourName Free HTML Hosting</title>
+<style>
+body {
+  background: linear-gradient(135deg, #2b1055, #7597de);
+  color: white;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 30px;
+}
+h1 { font-size: 28px; }
+textarea {
+  width: 90%;
+  height: 250px;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+  font-size: 15px;
+}
+button {
+  background: #00c6ff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+button:hover { background: #0072ff; }
+#output { margin-top: 20px; }
+</style>
+</head>
+<body>
+<h1>🚀 YourName Free Hosting</h1>
+<p>Paste your HTML code below and get a live link!</p>
+
+<textarea id="htmlCode" placeholder="Paste your HTML code here..."></textarea><br>
+<button onclick="upload()">Host Now</button>
+
+<div id="output"></div>
+
+<script>
+async function upload() {
+  const html = document.getElementById("htmlCode").value.trim();
+  if (!html) return alert("Please paste some HTML first!");
+  
+  document.getElementById("output").innerHTML = "⏳ Uploading...";
+
+  try {
+    const res = await fetch("https://api.paste.ee/v1/pastes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": "public"
+      },
+      body: JSON.stringify({
+        description: "Hosted Page",
+        sections: [{ name: "index.html", syntax: "html", contents: html }]
+      })
+    });
+
+    const data = await res.json();
+    if (data && data.link) {
+      document.getElementById("output").innerHTML =
+        `✅ Hosted: <a href="${data.link}" target="_blank">${data.link}</a>`;
+    } else {
+      document.getElementById("output").innerHTML = "❌ Error hosting.";
+    }
+  } catch (err) {
+    document.getElementById("output").innerHTML = "⚠️ Failed to connect.";
+  }
+}
+</script>
+</body>
+</html>
